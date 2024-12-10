@@ -2,6 +2,7 @@ import fmin from './base/fmin';
 import { randomSample, randomSearch } from './search/random';
 import { gridSample, gridSearch } from './search/grid';
 import RandomState from './utils/RandomState';
+import { bayesianSample, bayesianSearch } from './search/bayesian';
 
 export * from './base/base';
 
@@ -29,9 +30,11 @@ export const qlognormal = (mu, sigma, q) => ({
 export const search = {
   randomSearch,
   gridSearch,
+  bayesianSearch,
 };
 
 export const sample = {
   randomSample,
   gridSample,
+  bayesianSample
 };
