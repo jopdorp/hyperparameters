@@ -81,5 +81,23 @@
     "recall_memory_size": "8.0000000",
     "recall_memory_num_experiences_per_recall": "1275.0000000",
     "num_epochs": "2.0000000"
+  },
+  "Bayesian sample": {
+    "x": "3.9015472",
+    "y": "3.0000000"
+  },
+  "Bayesian quadratic optimization": {},
+  "Bayesian 2D optimization": {
+    "x": "1.2665640",
+    "y": "-0.8930757"
+  },
+  "Bayesian complex space": {
+    "learning_rate": "0.0000123",
+    "num_layers": "2.0000000",
+    "layer_sizes": [
+      24
+    ],
+    "activation": "sigmoid",
+    "dropout_rate": "0.1107709"
   }
 }

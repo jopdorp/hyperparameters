@@ -369,3 +369,96 @@ describe('fmin + rand', () => {
   });
 });
 
+describe('fmin + bayesian', () => {
+  const bayesianFMinSeeded = async (opt, space) => {
+    const trials = await hpjs.fmin(
+      opt,
+      space,
+      hpjs.search.bayesianSearch,
+      25,
+      { rng: new hpjs.RandomState(12345) }
+    );
+    return objectToFixed(trials.argmin);
+  };
+
+  it('Simple quadratic function optimization', async () => {
+    const space = hpjs.uniform(-5, 5);
+    const opt = x => (x ** 2);
+    assert.snapshot('Bayesian quadratic optimization', await bayesianFMinSeeded(opt, space));
+  });
+
+  it('2D quadratic optimization', async () => {
+    const space = {
+      x: hpjs.uniform(-5, 5),
+      y: hpjs.uniform(-5, 5)
+    };
+    const opt = ({ x, y }) => (x ** 2) + (y ** 2);
+    assert.snapshot('Bayesian 2D optimization', await bayesianFMinSeeded(opt, space));
+  });
+
+  it('Bayesian vs Random performance', async function() {
+    this.timeout(10000);
+    const space = {
+      x: hpjs.uniform(-5, 5),
+      y: hpjs.uniform(-5, 5)
+    };
+    const opt = ({ x, y }) => x ** 2 + y ** 2;
+    
+    const bayesianTrials = await hpjs.fmin(
+      opt,
+      space,
+      hpjs.search.bayesianSearch,
+      25,
+      { rng: new hpjs.RandomState(12345) }
+    );
+
+    const randomTrials = await hpjs.fmin(
+      opt,
+      space,
+      hpjs.search.randomSearch,
+      25,
+      { rng: new hpjs.RandomState(12345) }
+    );
+
+    const bayesianLoss = opt(bayesianTrials.argmin);
+    const randomLoss = opt(randomTrials.argmin);
+
+    assert(
+      bayesianLoss <= randomLoss,
+      `Bayesian (${bayesianLoss}) should perform better than Random (${randomLoss})`
+    );
+  });
+
+  it('Complex hyperparameter space', async () => {
+    const space = {
+      learning_rate: hpjs.loguniform(Math.log(1e-5), Math.log(1)),
+      num_layers: hpjs.choice([1, 2, 3]),
+      layer_sizes: hpjs.choice([
+        [hpjs.quniform(10, 50, 1)],
+        [hpjs.quniform(10, 50, 1), hpjs.quniform(10, 50, 1)],
+        [hpjs.quniform(10, 50, 1), hpjs.quniform(10, 50, 1), hpjs.quniform(10, 50, 1)]
+      ]),
+      activation: hpjs.choice(['relu', 'tanh', 'sigmoid']),
+      dropout_rate: hpjs.uniform(0, 0.5)
+    };
+
+    const opt = params => {
+      // Mock neural network performance metric
+      return params.learning_rate * 0.1 + 
+             (params.num_layers - 2) ** 2 + 
+             params.dropout_rate;
+    };
+
+    assert.snapshot('Bayesian complex space', await bayesianFMinSeeded(opt, space));
+  });
+
+  it('Bayesian sample function', () => {
+    const space = {
+      x: hpjs.uniform(-5, 5),
+      y: hpjs.quniform(0, 10, 1)
+    };
+    const sample = hpjs.sample.bayesianSample(space, { rng: new hpjs.RandomState(12345) });
+    assert.snapshot('Bayesian sample', objectToFixed(sample));
+  });
+});
+

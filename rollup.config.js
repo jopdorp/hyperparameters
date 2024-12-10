@@ -7,10 +7,11 @@ import uglify from 'rollup-plugin-uglify';
 const env = process.env.NODE_ENV;
 const config = {
   input: 'src/index.js',
-  external: ['mathjs'],
+  external: ['mathjs', 'cholesky'],
   output: {
     globals: {
-      mathjs: 'math'
+      mathjs: 'math',
+      cholesky: 'cho'
     }
   },
   plugins: [
@@ -18,7 +19,9 @@ const config = {
       include: 'node_modules/**',
       namedExports: {
         'mathjs': [
-          'exp', 'sqrt', 'sum', 'multiply', 'dotDivide', 'square', 'subtract', 'erf', 'lup', 'lusolve', 'transpose', 'map'
+          'exp', 'sqrt', 'sum', 'multiply', 'dotDivide', 'square', 
+          'subtract', 'erf', 'lup', 'lusolve', 'transpose', 'map',
+          'identity', 'zeros', 'matrix', 'size'
         ]
       }
     })

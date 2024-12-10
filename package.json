@@ -86,7 +86,8 @@
     "rollup-watch": "^4.3.1"
   },
   "dependencies": {
-    "mathjs": "^9.0.0"
+    "mathjs": "^9.0.0",
+    "cholesky": "^1.2.0"
   },
   "pre-commit": [
     "test"
